@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">House Control</string>
+    <string name="title_activity_path_checker">Path Checker</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+</resources>
