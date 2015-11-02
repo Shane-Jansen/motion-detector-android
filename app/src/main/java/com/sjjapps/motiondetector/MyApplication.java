@@ -1,12 +1,11 @@
-package com.sjjapps.housecontrol;
+package com.sjjapps.motiondetector;
 
 import android.app.Application;
-import android.util.Log;
 
-import com.parse.Parse;
-import com.parse.ParseException;
-import com.parse.ParseInstallation;
-import com.parse.SaveCallback;
+//import com.parse.Parse;
+//import com.parse.ParseException;
+//import com.parse.ParseInstallation;
+//import com.parse.SaveCallback;
 
 /**
  * Created by Shane Jansen on 8/29/14.
@@ -19,14 +18,14 @@ public class MyApplication extends Application {
 		super.onCreate();
 
 		//init parse
-		Parse.initialize(this, "dESyUZeAf30WPlqY2dVveMkZ3ZHRFfRpmmlYORUL", "hUvYsXLdWYpV97C9ofhu84v7NT1B1WvjfYWrrL43");
+		/*Parse.initialize(this, "dESyUZeAf30WPlqY2dVveMkZ3ZHRFfRpmmlYORUL", "hUvYsXLdWYpV97C9ofhu84v7NT1B1WvjfYWrrL43");
 		ParseInstallation.getCurrentInstallation().saveInBackground(new SaveCallback() {
 			@Override
 			public void done(ParseException e) {
 				String parseId = ParseInstallation.getCurrentInstallation().getObjectId();
 				Log.d(TAG, "Parse ID: " + parseId);
 			}
-		});
+		});*/
 	}
 
 }

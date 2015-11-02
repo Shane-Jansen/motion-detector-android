@@ -1,4 +1,4 @@
-package com.sjjapps.housecontrol;
+package com.sjjapps.motiondetector.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,9 +9,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.sjjapps.housecontrol.pathchecker.PathChecker;
+import com.sjjapps.motiondetector.R;
+import com.sjjapps.motiondetector.activity.bluetooth.BluetoothActivity;
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //views
     private Button btnPathChecker, btnSpotlightToggle, btnAirConditioner;
@@ -45,7 +46,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bthPathChecker:
-                Intent i = new Intent(this, PathChecker.class);
+                Intent i = new Intent(this, BluetoothActivity.class);
                 startActivity(i);
                 break;
             case R.id.btnSpotlightToggle:

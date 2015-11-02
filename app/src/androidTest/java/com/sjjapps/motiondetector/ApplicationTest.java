@@ -1,4 +1,4 @@
-package com.sjjapps.housecontrol;
+package com.sjjapps.motiondetector;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

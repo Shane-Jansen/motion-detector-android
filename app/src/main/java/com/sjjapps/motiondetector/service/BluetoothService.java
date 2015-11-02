@@ -1,4 +1,4 @@
-package com.sjjapps.housecontrol.pathchecker;
+package com.sjjapps.motiondetector.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -13,14 +13,13 @@ import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
-import android.view.WindowManager;
 
-import com.sjjapps.housecontrol.MainActivity;
-import com.sjjapps.housecontrol.R;
+import com.sjjapps.motiondetector.activity.MainActivity;
+import com.sjjapps.motiondetector.R;
+import com.sjjapps.motiondetector.helper.BluetoothConnectedHelper;
 
 /**
  * Created by Shane Jansen on 4/7/15.

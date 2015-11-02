@@ -1,4 +1,4 @@
-# README #
+# Motion Detector Android #
 
 ### Overview ###
 

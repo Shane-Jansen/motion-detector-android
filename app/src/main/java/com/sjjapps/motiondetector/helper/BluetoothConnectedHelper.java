@@ -1,4 +1,4 @@
-package com.sjjapps.housecontrol.pathchecker;
+package com.sjjapps.motiondetector.helper;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;

@@ -1,9 +1,8 @@
-package com.sjjapps.housecontrol.pathchecker;
+package com.sjjapps.motiondetector.activity.bluetooth;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -13,14 +12,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.sjjapps.housecontrol.R;
+import com.sjjapps.motiondetector.R;
+import com.sjjapps.motiondetector.activity.BaseActivity;
+import com.sjjapps.motiondetector.helper.BluetoothConnectionHelper;
+import com.sjjapps.motiondetector.service.BluetoothService;
 
 /**
  * Created by Shane Jansen on 4/7/15.
  *
  * Activity for PathChecker
  */
-public class PathChecker extends ActionBarActivity implements View.OnClickListener {
+public class BluetoothActivity extends BaseActivity implements View.OnClickListener {
     //instances
     private BluetoothConnectionHelper connectionHelper;
 
@@ -54,7 +56,7 @@ public class PathChecker extends ActionBarActivity implements View.OnClickListen
         if (requestCode == BluetoothConnectionHelper.REQUEST_ENABLE_BT) {
             if (resultCode == RESULT_OK) {
                 //bluetooth enabled successfully
-                Toast.makeText(PathChecker.this, "Ready to discover devices.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BluetoothActivity.this, "Ready to discover devices.", Toast.LENGTH_SHORT).show();
             }
             else {
                 finish();
@@ -82,7 +84,7 @@ public class PathChecker extends ActionBarActivity implements View.OnClickListen
                     case BluetoothConnectionHelper.HANDLER_READY_TO_CONNECT:
                         //ready to start service with selected device
                         String macAddress = (String)msg.obj; //get mac address
-                        Intent i = new Intent(PathChecker.this, BluetoothService.class);
+                        Intent i = new Intent(BluetoothActivity.this, BluetoothService.class);
                         i.putExtra("macAddress", macAddress);
                         String timeout = etTimeout.getText().toString();
                         int timeoutInt = 5000;

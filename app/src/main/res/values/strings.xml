@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">House Control</string>
+    <string name="app_name">Motion Detector</string>
     <string name="title_activity_path_checker">Path Checker</string>
 
     <string name="hello_world">Hello world!</string>

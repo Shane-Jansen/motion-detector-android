@@ -1,4 +1,4 @@
-package com.sjjapps.housecontrol.pathchecker;
+package com.sjjapps.motiondetector.helper;
 
 import android.app.Activity;
 import android.app.AlertDialog;
