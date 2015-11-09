@@ -56,7 +56,7 @@ public class BluetoothService extends Service {
         //initialize media player
         motionDetectedPlayer = MediaPlayer.create(this, R.raw.alert);
         motionDetectedPlayer.setLooping(true);
-        disconnectedPlayer = MediaPlayer.create(this, R.raw.disconnected_beep);
+        disconnectedPlayer = MediaPlayer.create(this, R.raw.alert_disconnected);
         disconnectedPlayer.setLooping(true);
 
         notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
