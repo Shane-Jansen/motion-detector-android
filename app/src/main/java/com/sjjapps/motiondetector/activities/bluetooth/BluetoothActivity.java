@@ -1,10 +1,9 @@
-package com.sjjapps.motiondetector.activity.bluetooth;
+package com.sjjapps.motiondetector.activities.bluetooth;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,9 +12,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.sjjapps.motiondetector.R;
-import com.sjjapps.motiondetector.activity.BaseActivity;
-import com.sjjapps.motiondetector.helper.BluetoothConnectionHelper;
-import com.sjjapps.motiondetector.service.BluetoothService;
+import com.sjjapps.motiondetector.activities.BaseActivity;
+import com.sjjapps.motiondetector.utils.BluetoothConnectionHelper;
+import com.sjjapps.motiondetector.managers.BluetoothService;
 
 /**
  * Created by Shane Jansen on 4/7/15.

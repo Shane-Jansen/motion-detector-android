@@ -1,4 +1,4 @@
-package com.sjjapps.motiondetector.service;
+package com.sjjapps.motiondetector.managers;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -17,9 +17,9 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 
-import com.sjjapps.motiondetector.activity.MainActivity;
+import com.sjjapps.motiondetector.activities.MainActivity;
 import com.sjjapps.motiondetector.R;
-import com.sjjapps.motiondetector.helper.BluetoothConnectedHelper;
+import com.sjjapps.motiondetector.utils.BluetoothConnectedHelper;
 
 /**
  * Created by Shane Jansen on 4/7/15.

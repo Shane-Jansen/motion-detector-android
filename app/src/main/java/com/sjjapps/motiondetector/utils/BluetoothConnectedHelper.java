@@ -1,4 +1,4 @@
-package com.sjjapps.motiondetector.helper;
+package com.sjjapps.motiondetector.utils;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;

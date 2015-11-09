@@ -1,4 +1,4 @@
-package com.sjjapps.motiondetector.activity;
+package com.sjjapps.motiondetector.activities;
 
 import android.support.v7.app.AppCompatActivity;
 
