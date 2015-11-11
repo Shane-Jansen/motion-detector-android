@@ -2,7 +2,6 @@ package com.sjjapps.motiondetector;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,7 +10,8 @@ import android.support.v7.widget.Toolbar;
  * Created by Shane Jansen on 11/9/15.
  */
 public abstract class BaseActivity extends AppCompatActivity {
-    private Toolbar toolbar;
+    // Instances
+    private Toolbar mToolbar;
 
     protected abstract int getLayoutResource();
 
@@ -19,9 +19,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
             setActionBarNavigateUp();
         }
     }
@@ -31,7 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * be displayed and enables it if is should be.
      */
     protected void setActionBarNavigateUp() {
-        if (toolbar != null) {
+        if (mToolbar != null) {
             int numBack = getSupportFragmentManager().getBackStackEntryCount();
             Intent upIntent = NavUtils.getParentActivityIntent(this);
             if (numBack != 0 || upIntent != null) {
@@ -46,7 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void setActionBarTitle(String title) {
-        if (toolbar != null) {
+        if (mToolbar != null) {
             assert getSupportActionBar() != null;
             getSupportActionBar().setTitle(title);
         }

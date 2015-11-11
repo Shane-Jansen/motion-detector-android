@@ -27,58 +27,25 @@ import java.util.ArrayList;
  * and returning the mac address of the selected device.
  */
 public class BluetoothConnectionHelper {
-    //constants
-    public static final int REQUEST_ENABLE_BT = 1;
+    // Constants
     public static final int HANDLER_READY_TO_CONNECT = 1;
 
-    //instances
-    private Handler connectionHandler;
-    private BluetoothAdapter bluetoothAdapter;
-    private Dialog devicesDialog;
+    // Instances
+    private Handler mConnectionHandler;
+    private BluetoothAdapter mBluetoothAdapter;
+    private Dialog mDevicesDialog;
+    private Activity mContext;
 
-    //data
-    private Activity aContext;
+    // Receivers
+    private BroadcastReceiver mStartedSearchReceiver;
+    private BroadcastReceiver mFinishedSearchReceiver;
+    private BroadcastReceiver mDeviceFoundReceiver;
 
-    //receivers
-    private BroadcastReceiver startedSearchReceiver;
-    private BroadcastReceiver finishedSearchReceiver;
-    private BroadcastReceiver deviceFoundReceiver;
-
-    public BluetoothConnectionHelper(Activity aContext) {
-        this.aContext = aContext;
-    }
-
-    /**
-     * Check if bluetooth is available for this device.
-     * Check if bluetooth is turned on for this device
-     * and requests to turn it on if not.
-     */
-    public void setupBluetooth(Handler connectionHandler) {
-        this.connectionHandler = connectionHandler;
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter == null) {
-            //device does not support bluetooth; exit activity
-            new AlertDialog.Builder(aContext)
-                    .setTitle("Error")
-                    .setMessage("Your device does not support bluetooth.")
-                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            aContext.finish();
-                        }
-                    })
-                    .show();
-        }
-        else {
-            if(!bluetoothAdapter.isEnabled()) {
-                //bluetooth is not enabled; request to enable it
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                aContext.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-            else {
-                Toast.makeText(aContext, "Ready to discover devices.", Toast.LENGTH_SHORT).show();
-            }
-        }
+    public BluetoothConnectionHelper(Activity context, Handler connectionHandler,
+                                     BluetoothAdapter bluetoothAdapter) {
+        this.mContext = context;
+        this.mConnectionHandler = connectionHandler;
+        this.mBluetoothAdapter = bluetoothAdapter;
     }
 
     /**
@@ -88,47 +55,47 @@ public class BluetoothConnectionHelper {
      * the list.
      */
     public void discoverDevices() {
-        //prepare list dialog to display found devices
-        final AlertDialog.Builder deviceAlertBuilder = new AlertDialog.Builder(aContext).setTitle("Searching...").setCancelable(false)
+        // Prepare list dialog to display found devices
+        final AlertDialog.Builder deviceAlertBuilder = new AlertDialog.Builder(mContext).setTitle("Searching...").setCancelable(false)
                 .setNegativeButton("Close", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        bluetoothAdapter.cancelDiscovery();
-                        devicesDialog.dismiss();
+                        mBluetoothAdapter.cancelDiscovery();
+                        mDevicesDialog.dismiss();
                     }
                 });
-        final ListView devicesList = new ListView(aContext);
+        final ListView devicesList = new ListView(mContext);
         final ArrayList<BluetoothDevice> foundBluetoothDevices = new ArrayList<>();
         final ArrayList<String> foundBluetoothNames = new ArrayList<>();
-        final ArrayAdapter<String> deviceAdapter = new ArrayAdapter<>(aContext, android.R.layout.simple_list_item_1, android.R.id.text1, foundBluetoothNames);
+        final ArrayAdapter<String> deviceAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, foundBluetoothNames);
         devicesList.setAdapter(deviceAdapter);
         deviceAlertBuilder.setView(devicesList);
-        devicesDialog = deviceAlertBuilder.create();
+        mDevicesDialog = deviceAlertBuilder.create();
         devicesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                devicesDialog.dismiss();
+                mDevicesDialog.dismiss();
                 String macAddress = foundBluetoothDevices.get(position).getAddress();
-                bluetoothAdapter.cancelDiscovery();
-                connectionHandler.obtainMessage(HANDLER_READY_TO_CONNECT, macAddress).sendToTarget();
+                mBluetoothAdapter.cancelDiscovery();
+                mConnectionHandler.obtainMessage(HANDLER_READY_TO_CONNECT, macAddress).sendToTarget();
             }
         });
-        devicesDialog.show();
+        mDevicesDialog.show();
 
-        bluetoothAdapter.startDiscovery(); //start searching and broadcasts: ACTION_DISCOVERY_STARTED, ACTION_DISCOVERY_FINISHED, ACTION_FOUND
+        mBluetoothAdapter.startDiscovery(); // Start searching and broadcasts: ACTION_DISCOVERY_STARTED, ACTION_DISCOVERY_FINISHED, ACTION_FOUND
 
-        //create and register broadcast receivers
-        startedSearchReceiver = new BroadcastReceiver() {
+        // Create and register broadcast receivers
+        mStartedSearchReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {}
         };
-        finishedSearchReceiver = new BroadcastReceiver() {
+        mFinishedSearchReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                devicesDialog.setTitle("Finished Searching");
+                mDevicesDialog.setTitle("Finished Searching");
             }
         };
-        deviceFoundReceiver = new BroadcastReceiver() {
+        mDeviceFoundReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
@@ -137,9 +104,9 @@ public class BluetoothConnectionHelper {
                 deviceAdapter.notifyDataSetChanged();
             }
         };
-        aContext.registerReceiver(startedSearchReceiver,  new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
-        aContext.registerReceiver(finishedSearchReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
-        aContext.registerReceiver(deviceFoundReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        mContext.registerReceiver(mStartedSearchReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
+        mContext.registerReceiver(mFinishedSearchReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
+        mContext.registerReceiver(mDeviceFoundReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
     }
 
 
@@ -148,12 +115,9 @@ public class BluetoothConnectionHelper {
      * for and selecting a device.
      */
     public void finishedSearching() {
-        if (startedSearchReceiver != null)
-            aContext.unregisterReceiver(startedSearchReceiver);
-        if (finishedSearchReceiver != null)
-            aContext.unregisterReceiver(finishedSearchReceiver);
-        if (deviceFoundReceiver != null)
-            aContext.unregisterReceiver(deviceFoundReceiver);
+        if (mStartedSearchReceiver != null) mContext.unregisterReceiver(mStartedSearchReceiver);
+        if (mFinishedSearchReceiver != null) mContext.unregisterReceiver(mFinishedSearchReceiver);
+        if (mDeviceFoundReceiver != null) mContext.unregisterReceiver(mDeviceFoundReceiver);
     }
 
 }

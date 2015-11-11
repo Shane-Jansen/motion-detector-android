@@ -6,21 +6,6 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:text="The display timeout will not work if it's shorter than the default screen timeout for your device (usually 1-10 seconds)."/>
-
-    <EditText
-        android:id="@+id/etTimeout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="Display Timeout (Seconds)"/>
-
     <Button
         android:id="@+id/btnFindDevice"
         android:layout_width="wrap_content"

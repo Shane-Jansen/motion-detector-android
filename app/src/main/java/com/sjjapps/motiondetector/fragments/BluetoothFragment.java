@@ -1,6 +1,9 @@
 package com.sjjapps.motiondetector.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +18,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.sjjapps.motiondetector.R;
+import com.sjjapps.motiondetector.managers.BluetoothConnectionHandler;
 import com.sjjapps.motiondetector.utils.BluetoothConnectionHelper;
 import com.sjjapps.motiondetector.managers.BluetoothService;
 
@@ -24,12 +28,14 @@ import com.sjjapps.motiondetector.managers.BluetoothService;
  * Activity for PathChecker
  */
 public class BluetoothFragment extends Fragment implements View.OnClickListener {
+    // Constants
+    public static final int REQUEST_ENABLE_BT = 1;
+
     // Instances
+    private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private TransactionInterface mTransactionInterface;
     private BluetoothConnectionHelper mConnectionHelper;
 
-    // Views
-    private EditText etTimeout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,10 +57,11 @@ public class BluetoothFragment extends Fragment implements View.OnClickListener 
         // Finding views
         Button btnFindDevice = (Button) v.findViewById(R.id.btnFindDevice);
         btnFindDevice.setOnClickListener(this);
-        etTimeout = (EditText) v.findViewById(R.id.etTimeout);
 
-        mConnectionHelper = new BluetoothConnectionHelper(getActivity());
-        startBluetoothConnection();
+        mConnectionHelper = new BluetoothConnectionHelper(getActivity(),
+                new BluetoothConnectionHandler(getActivity()),
+                mBluetoothAdapter);
+        checkBluetoothState();
 
         return v;
     }
@@ -76,7 +83,7 @@ public class BluetoothFragment extends Fragment implements View.OnClickListener 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BluetoothConnectionHelper.REQUEST_ENABLE_BT) {
+        if (requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == Activity.RESULT_OK) {
                 // Bluetooth enabled successfully
                 Toast.makeText(getActivity(), "Ready to discover devices.", Toast.LENGTH_SHORT).show();
@@ -88,26 +95,34 @@ public class BluetoothFragment extends Fragment implements View.OnClickListener 
         }
     }
 
-    private void startBluetoothConnection() {
-        Handler bluetoothReceivedDataHandler = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message msg) {
-                switch (msg.what) {
-                    case BluetoothConnectionHelper.HANDLER_READY_TO_CONNECT:
-                        // Ready to start service with selected device
-                        String macAddress = (String) msg.obj; // Get mac address
-                        Intent i = new Intent(getActivity(), BluetoothService.class);
-                        i.putExtra("macAddress", macAddress);
-                        String timeout = etTimeout.getText().toString();
-                        int timeoutInt = 5000;
-                        if (timeout.length() != 0) timeoutInt = Integer.parseInt(timeout) * 1000;
-                        i.putExtra("timeout", timeoutInt);
-                        getActivity().startService(i);
-                        break;
-                }
-                return true;
+    /**
+     * Check if bluetooth is available for this device.
+     * Check if bluetooth is turned on for this device
+     * and requests to turn it on if not.
+     */
+    private void checkBluetoothState() {
+        if (mBluetoothAdapter == null) {
+            // Device does not support bluetooth. Exit the fragment
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Bluetooth Not Supported")
+                    .setMessage("Your device does not support bluetooth.")
+                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mTransactionInterface.removeCurrentFragment();
+                        }
+                    })
+                    .show();
+        }
+        else {
+            if(!mBluetoothAdapter.isEnabled()) {
+                // Bluetooth is not enabled. Request to enable it
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
-        });
-        mConnectionHelper.setupBluetooth(bluetoothReceivedDataHandler);
+            else {
+                Toast.makeText(getActivity(), "Ready to discover devices.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

@@ -11,7 +11,7 @@ import com.sjjapps.motiondetector.fragments.TransactionInterface;
 
 public class MainActivity extends BaseActivity implements FragmentManager.OnBackStackChangedListener,
         TransactionInterface {
-    // Finals
+    // Constants
     private final static int FRAGMENT_CONTAINER = R.id.fragment_container;
 
     // Instances
