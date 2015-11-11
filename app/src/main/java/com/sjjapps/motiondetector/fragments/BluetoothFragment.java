@@ -1,13 +1,15 @@
 package com.sjjapps.motiondetector.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -21,58 +23,69 @@ import com.sjjapps.motiondetector.managers.BluetoothService;
  *
  * Activity for PathChecker
  */
-public class BluetoothFragment extends Fragment {
-    //instances
-    private BluetoothConnectionHelper connectionHelper;
+public class BluetoothFragment extends Fragment implements View.OnClickListener {
+    // Instances
+    private TransactionInterface mTransactionInterface;
+    private BluetoothConnectionHelper mConnectionHelper;
 
-    //views
-    private Button btnFindDevice;
+    // Views
     private EditText etTimeout;
 
-    /*@Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_bluetooth);
+        try {
+            mTransactionInterface = (TransactionInterface) getActivity();
+        }
+        catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString()
+                    + " must implement TransactionInterface");
+        }
+    }
 
-        btnFindDevice = (Button)findViewById(R.id.btnFindDevice);
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_bluetooth, container, false);
+
+        // Finding views
+        Button btnFindDevice = (Button) v.findViewById(R.id.btnFindDevice);
         btnFindDevice.setOnClickListener(this);
-        etTimeout = (EditText)findViewById(R.id.etTimeout);
+        etTimeout = (EditText) v.findViewById(R.id.etTimeout);
 
+        mConnectionHelper = new BluetoothConnectionHelper(getActivity());
         startBluetoothConnection();
+
+        return v;
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
+    public void onPause() {
+        mConnectionHelper.finishedSearching();
+        super.onPause();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.btnFindDevice:
-                connectionHelper.discoverDevices();
+                mConnectionHelper.discoverDevices();
                 break;
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == BluetoothConnectionHelper.REQUEST_ENABLE_BT) {
-            if (resultCode == RESULT_OK) {
-                //bluetooth enabled successfully
-                Toast.makeText(BluetoothFragment.this, "Ready to discover devices.", Toast.LENGTH_SHORT).show();
+            if (resultCode == Activity.RESULT_OK) {
+                // Bluetooth enabled successfully
+                Toast.makeText(getActivity(), "Ready to discover devices.", Toast.LENGTH_SHORT).show();
             }
             else {
-                finish();
+                // Bluetooth could not be enabled
+                mTransactionInterface.removeCurrentFragment();
             }
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_path_checker, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        return super.onOptionsItemSelected(item);
     }
 
     private void startBluetoothConnection() {
@@ -81,28 +94,20 @@ public class BluetoothFragment extends Fragment {
             public boolean handleMessage(Message msg) {
                 switch (msg.what) {
                     case BluetoothConnectionHelper.HANDLER_READY_TO_CONNECT:
-                        //ready to start service with selected device
-                        String macAddress = (String)msg.obj; //get mac address
-                        Intent i = new Intent(BluetoothFragment.this, BluetoothService.class);
+                        // Ready to start service with selected device
+                        String macAddress = (String) msg.obj; // Get mac address
+                        Intent i = new Intent(getActivity(), BluetoothService.class);
                         i.putExtra("macAddress", macAddress);
                         String timeout = etTimeout.getText().toString();
                         int timeoutInt = 5000;
                         if (timeout.length() != 0) timeoutInt = Integer.parseInt(timeout) * 1000;
                         i.putExtra("timeout", timeoutInt);
-                        startService(i);
+                        getActivity().startService(i);
                         break;
                 }
                 return true;
             }
         });
-
-        connectionHelper = new BluetoothConnectionHelper(this);
-        connectionHelper.setupBluetooth(bluetoothReceivedDataHandler);
+        mConnectionHelper.setupBluetooth(bluetoothReceivedDataHandler);
     }
-
-    @Override
-    protected void onDestroy() {
-        connectionHelper.finishedSearching();
-        super.onDestroy();
-    }*/
 }

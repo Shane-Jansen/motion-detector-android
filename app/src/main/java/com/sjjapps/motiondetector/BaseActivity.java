@@ -2,6 +2,7 @@ package com.sjjapps.motiondetector;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,12 +22,25 @@ public abstract class BaseActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            // Check if the back arrow should be displayed
+            setActionBarNavigateUp();
+        }
+    }
+
+    /**
+     * Checks if the back arrow in the action bar should
+     * be displayed and enables it if is should be.
+     */
+    protected void setActionBarNavigateUp() {
+        if (toolbar != null) {
             int numBack = getSupportFragmentManager().getBackStackEntryCount();
             Intent upIntent = NavUtils.getParentActivityIntent(this);
             if (numBack != 0 || upIntent != null) {
                 assert getSupportActionBar() != null;
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+            else {
+                assert getSupportActionBar() != null;
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             }
         }
     }

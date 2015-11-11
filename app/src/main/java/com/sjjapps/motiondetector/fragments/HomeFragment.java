@@ -54,7 +54,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bthPathChecker:
-                mTransactionInterface.replaceFragment(new BluetoothFragment());
+                mTransactionInterface.addFragment(new BluetoothFragment(), true);
                 break;
             case R.id.btnSpotlightToggle:
                 Toast.makeText(getActivity(), "Not yet implemented.", Toast.LENGTH_SHORT).show();
