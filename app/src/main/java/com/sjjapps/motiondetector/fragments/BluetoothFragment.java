@@ -1,9 +1,10 @@
-package com.sjjapps.motiondetector.activities.bluetooth;
+package com.sjjapps.motiondetector.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,7 +13,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.sjjapps.motiondetector.R;
-import com.sjjapps.motiondetector.activities.BaseActivity;
 import com.sjjapps.motiondetector.utils.BluetoothConnectionHelper;
 import com.sjjapps.motiondetector.managers.BluetoothService;
 
@@ -21,7 +21,7 @@ import com.sjjapps.motiondetector.managers.BluetoothService;
  *
  * Activity for PathChecker
  */
-public class BluetoothActivity extends BaseActivity implements View.OnClickListener {
+public class BluetoothFragment extends Fragment {
     //instances
     private BluetoothConnectionHelper connectionHelper;
 
@@ -29,10 +29,10 @@ public class BluetoothActivity extends BaseActivity implements View.OnClickListe
     private Button btnFindDevice;
     private EditText etTimeout;
 
-    @Override
+    /*@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_path_checker);
+        setContentView(R.layout.fragment_bluetooth);
 
         btnFindDevice = (Button)findViewById(R.id.btnFindDevice);
         btnFindDevice.setOnClickListener(this);
@@ -55,7 +55,7 @@ public class BluetoothActivity extends BaseActivity implements View.OnClickListe
         if (requestCode == BluetoothConnectionHelper.REQUEST_ENABLE_BT) {
             if (resultCode == RESULT_OK) {
                 //bluetooth enabled successfully
-                Toast.makeText(BluetoothActivity.this, "Ready to discover devices.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BluetoothFragment.this, "Ready to discover devices.", Toast.LENGTH_SHORT).show();
             }
             else {
                 finish();
@@ -83,7 +83,7 @@ public class BluetoothActivity extends BaseActivity implements View.OnClickListe
                     case BluetoothConnectionHelper.HANDLER_READY_TO_CONNECT:
                         //ready to start service with selected device
                         String macAddress = (String)msg.obj; //get mac address
-                        Intent i = new Intent(BluetoothActivity.this, BluetoothService.class);
+                        Intent i = new Intent(BluetoothFragment.this, BluetoothService.class);
                         i.putExtra("macAddress", macAddress);
                         String timeout = etTimeout.getText().toString();
                         int timeoutInt = 5000;
@@ -104,5 +104,5 @@ public class BluetoothActivity extends BaseActivity implements View.OnClickListe
     protected void onDestroy() {
         connectionHelper.finishedSearching();
         super.onDestroy();
-    }
+    }*/
 }

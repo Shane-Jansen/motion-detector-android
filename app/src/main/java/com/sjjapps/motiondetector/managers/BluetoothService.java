@@ -17,7 +17,7 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 
-import com.sjjapps.motiondetector.activities.MainActivity;
+import com.sjjapps.motiondetector.MainActivity;
 import com.sjjapps.motiondetector.R;
 import com.sjjapps.motiondetector.utils.BluetoothConnectedHelper;
 
