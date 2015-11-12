@@ -4,16 +4,16 @@
     tools:context="com.sjjapps.motiondetector.fragments.BluetoothFragment"
     android:background="@android:color/holo_blue_dark"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    >
 
     <Button
         android:id="@+id/btnFindDevice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="Search for Access"
-        android:background="@android:color/holo_blue_light"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"/>
+        android:text="@string/bluetooth.search"
+        style="@style/StdButton"
+        />
 
 </LinearLayout>

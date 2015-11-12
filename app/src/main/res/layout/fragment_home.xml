@@ -1,13 +1,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:weightSum="3"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
         <!-- Section 1 -->
         <LinearLayout
@@ -16,21 +18,24 @@
             android:layout_weight="1"
             android:orientation="horizontal"
             android:gravity="center"
-            android:weightSum="2">
+            android:weightSum="2"
+            >
             <Button
                 android:id="@+id/bthPathChecker"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Path Checker"
-                android:background="@android:color/holo_blue_dark"/>
+                android:text="@string/home.bluetooth.motion"
+                android:background="@android:color/holo_blue_dark"
+                />
             <Button
                 android:id="@+id/btnSpotlightToggle"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Spotlight Toggle\n(On/Off Icon Here)"
-                android:background="@android:color/holo_blue_light"/>
+                android:text=""
+                android:background="@android:color/holo_blue_light"
+                />
         </LinearLayout>
 
         <!-- Section 2 -->
@@ -40,20 +45,23 @@
             android:layout_weight="1"
             android:orientation="horizontal"
             android:gravity="center"
-            android:weightSum="2">
+            android:weightSum="2"
+            >
             <Button
                 android:id="@+id/btnAirConditioner"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Air Conditioner\n(On/Off or Set Const Temp)"
-                android:background="@android:color/holo_blue_light"/>
+                android:text=""
+                android:background="@android:color/holo_blue_light"
+                />
             <Button
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text=""
-                android:background="@android:color/holo_blue_dark"/>
+                android:background="@android:color/holo_blue_dark"
+                />
         </LinearLayout>
 
         <!-- Section 3 -->
@@ -63,21 +71,23 @@
             android:layout_weight="1"
             android:orientation="horizontal"
             android:gravity="center"
-            android:weightSum="2">
+            android:weightSum="2"
+            >
             <Button
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text=""
-                android:background="@android:color/holo_blue_dark"/>
+                android:background="@android:color/holo_blue_dark"
+                />
             <Button
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text=""
-                android:background="@android:color/holo_blue_light"/>
+                android:background="@android:color/holo_blue_light"
+                />
         </LinearLayout>
-
 
     </LinearLayout>
 </LinearLayout>

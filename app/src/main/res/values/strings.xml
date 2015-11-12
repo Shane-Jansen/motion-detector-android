@@ -4,4 +4,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string name="bluetooth.search">Search For Access</string>
+    <string name="home.bluetooth.motion">Bluetooth Motion Sensor</string>
 </resources>
