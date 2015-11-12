@@ -27,7 +27,7 @@ import com.sjjapps.motiondetector.utils.BluetoothConnectedHelper;
  * Handles the bluetooth connection and notifications.
  */
 public class BluetoothService extends Service {
-    //constants
+    // Constants
     private static final String ACTION_WAIT_PRESSED = "com.sjjapps.BluetoothService.ACTION_WAIT_PRESSED";
     private static final String ACTION_STOP_PRESSED = "com.sjjapps.BluetoothService.ACTION_STOP_PRESSED";
     private static final String ACTION_MOTION_DETECTED_PRESSED = "com.sjjapps.BluetoothService.ACTION_MOTION_DETECTED_PRESSED";
@@ -35,16 +35,11 @@ public class BluetoothService extends Service {
     private static final int NOTIFICATION_ID = 1;
     private static final int SERVICE_ID = 1;
 
-    //data
-    private int screenTimeout;
-
-    //instances
-    public BluetoothConnectedHelper connectedHelper;
-    private MediaPlayer motionDetectedPlayer, disconnectedPlayer;
-    private NotificationManager notificationManager;
-
-    //broadcast receivers
-    private BroadcastReceiver waitReceiver, stopReceiver, motionDetectedReceiver, disconnectedReceiver;
+    // Instances
+    public BluetoothConnectedHelper mConnectedHelper;
+    private MediaPlayer mMotionDetectedPlayer, mDisconnectedPlayer;
+    private NotificationManager mNotificationManager;
+    private BroadcastReceiver mWaitReceiver, mStopReceiver, mMotionDetectedReceiver, mDisconnectedReceiver;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -53,16 +48,15 @@ public class BluetoothService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //initialize media player
-        motionDetectedPlayer = MediaPlayer.create(this, R.raw.alert);
-        motionDetectedPlayer.setLooping(true);
-        disconnectedPlayer = MediaPlayer.create(this, R.raw.alert_disconnected);
-        disconnectedPlayer.setLooping(true);
+        // Initialize media player
+        mMotionDetectedPlayer = MediaPlayer.create(this, R.raw.alert);
+        mMotionDetectedPlayer.setLooping(true);
+        mDisconnectedPlayer = MediaPlayer.create(this, R.raw.alert_disconnected);
+        mDisconnectedPlayer.setLooping(true);
 
-        notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         String macAddress = intent.getStringExtra("macAddress");
-        screenTimeout = intent.getIntExtra("timeout", 5000);
         startBluetoothConnection(macAddress);
         showOngoingNotification();
 
@@ -71,7 +65,7 @@ public class BluetoothService extends Service {
 
     /**
      * Starts the bluetooth connection and sets
-     * appropriate handler for handling received data.
+     * appropriate handlers for handling received data.
      * @param macAddress
      */
     private void startBluetoothConnection(String macAddress) {
@@ -80,28 +74,28 @@ public class BluetoothService extends Service {
             public boolean handleMessage(Message msg) {
                 switch (msg.what) {
                     case BluetoothConnectedHelper.HANDLER_RECEIVED_DATA:
-                        //data was received from bluetooth
-                        //wake the screen
+                        // Data was received from bluetooth
+                        // Wake the screen
                         PowerManager pm = (PowerManager)BluetoothService.this.getSystemService(Context.POWER_SERVICE);
                         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "MyLock");
-                        wl.acquire(screenTimeout);
-                        //get the received string
+                        wl.acquire();
+                        // Get the received string
                         byte[] receivedBytes = (byte[]) msg.obj;
                         String received = new String(receivedBytes, 0, msg.arg1);
-                        //check what was received
-                        if (received.equals("m")) { //motion detected
-                            //send back a "1" to indicate that the data was received successfully
-                            connectedHelper.sendData("m");
-                            //set volume to max and play sound
+                        // Check what was received
+                        if (received.equals("m")) { // Motion detected
+                            // Send back a "1" to indicate that the data was received successfully
+                            mConnectedHelper.sendData("m");
+                            // Set volume to max and play sound
                             AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
                             am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-                            motionDetectedPlayer.start();
-                            //display new notification to replace current one
+                            mMotionDetectedPlayer.start();
+                            // Display new notification to replace current one
                             showMotionDetectedNotification();
                         }
-                        else if (received.equals("w")) { //wait command received
+                        else if (received.equals("w")) { // Wait command received
                             //Toast.makeText(BluetoothService.this, "W received.", Toast.LENGTH_SHORT).show();
-                            //show countdown notification
+                            // Show countdown notification
                             new CountDownTimer(60000, 1000) {
                                 @Override
                                 public void onTick(long millisUntilFinished) {
@@ -116,13 +110,11 @@ public class BluetoothService extends Service {
                         }
                         break;
                     case BluetoothConnectedHelper.HANDLER_CONNECTION_LOST:
-                        //remove notification
-                        //notificationManager.cancel(NOTIFICATION_ID);
-                        //create new notification and play sound
+                        // Play disconnect sound
                         AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
                         am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-                        disconnectedPlayer.start();
-                        //display new notification to replace current one
+                        mDisconnectedPlayer.start();
+                        // Display new notification to replace current one
                         showDisconnectedNotification();
                         break;
                 }
@@ -131,13 +123,13 @@ public class BluetoothService extends Service {
             }
         });
 
-        //start the bluetooth connection
-        connectedHelper = new BluetoothConnectedHelper(this, macAddress, receiveDataHandler);
+        // Start the bluetooth connection
+        mConnectedHelper = new BluetoothConnectedHelper(this, macAddress, receiveDataHandler);
     }
 
     /**
      * Shows the active bluetooth connection as a
-     * persistent notification.  Includes buttons for
+     * persistent notification. Includes buttons for
      * waiting and stopping connection.
      */
     private void showOngoingNotification() {
@@ -157,41 +149,41 @@ public class BluetoothService extends Service {
         mBuilder.setContentIntent(resultPendingIntent);
         mBuilder.setOngoing(true);
 
-        //set and register broadcast receivers for clicking notification buttons
-        waitReceiver = new BroadcastReceiver() {
+        // Set and register broadcast receivers for clicking notification buttons
+        mWaitReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //send "w".  should receive "w" to confirm and start countdown.
-                connectedHelper.sendData("w");
+                // Send "w". Should receive "w" to confirm and start countdown
+                mConnectedHelper.sendData("w");
             }
         };
-        stopReceiver = new BroadcastReceiver() {
+        mStopReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //remove notification and stop service
-                notificationManager.cancel(NOTIFICATION_ID);
+                // Remove notification and stop service
+                mNotificationManager.cancel(NOTIFICATION_ID);
                 bluetoothFinished();
             }
         };
-        registerReceiver(waitReceiver, new IntentFilter(ACTION_WAIT_PRESSED));
-        registerReceiver(stopReceiver, new IntentFilter(ACTION_STOP_PRESSED));
+        registerReceiver(mWaitReceiver, new IntentFilter(ACTION_WAIT_PRESSED));
+        registerReceiver(mStopReceiver, new IntentFilter(ACTION_STOP_PRESSED));
 
-        //create intents for pressing notification buttons
+        // Create intents for pressing notification buttons
         Intent waitReceive = new Intent(ACTION_WAIT_PRESSED);
         Intent stopReceive = new Intent(ACTION_STOP_PRESSED);
         PendingIntent pendingIntentWait = PendingIntent.getBroadcast(this, 123, waitReceive, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent pendingIntentStop = PendingIntent.getBroadcast(this, 123, stopReceive, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //add the buttons and intents to notification
+        // Add the buttons and intents to notification
         mBuilder.addAction(android.R.drawable.ic_dialog_alert, "Wait 1 Min.", pendingIntentWait);
         mBuilder.addAction(android.R.drawable.ic_delete, "Stop", pendingIntentStop);
 
-        //build and show notification
+        // Build and show notification
         Notification notification = mBuilder.build();
-        notificationManager.notify(NOTIFICATION_ID, notification);
+        mNotificationManager.notify(NOTIFICATION_ID, notification);
 
-        //keeps this service in the foreground so it will not be destroyed; even if the app is closed
-        //use alarm manager instead if you want to perform operations periodically
+        // Keeps this service in the foreground so it will not be destroyed. Even if the app is closed
+        // Use alarm manager instead if you want to perform operations periodically
         startForeground(SERVICE_ID, notification);
     }
 
@@ -217,26 +209,26 @@ public class BluetoothService extends Service {
         mBuilder.setContentIntent(resultPendingIntent);
         mBuilder.setOngoing(true);
 
-        //set and register broadcast receivers for clicking notification buttons
-        motionDetectedReceiver = new BroadcastReceiver() {
+        // Set and register broadcast receivers for clicking notification buttons
+        mMotionDetectedReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                motionDetectedPlayer.pause();
+                mMotionDetectedPlayer.pause();
                 showOngoingNotification();
             }
         };
-        registerReceiver(motionDetectedReceiver, new IntentFilter(ACTION_MOTION_DETECTED_PRESSED));
+        registerReceiver(mMotionDetectedReceiver, new IntentFilter(ACTION_MOTION_DETECTED_PRESSED));
 
-        //create intents for pressing notification buttons
+        // Create intents for pressing notification buttons
         Intent motionReceive = new Intent(ACTION_MOTION_DETECTED_PRESSED);
         PendingIntent pendingIntentMotion = PendingIntent.getBroadcast(this, 123, motionReceive, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //add the buttons and intents to notification
+        // Add the buttons and intents to notification
         mBuilder.addAction(android.R.drawable.ic_dialog_alert, "Stop Alarm", pendingIntentMotion);
 
-        //build and show notification
+        // Build and show notification
         Notification notification = mBuilder.build();
-        notificationManager.notify(NOTIFICATION_ID, notification);
+        mNotificationManager.notify(NOTIFICATION_ID, notification);
 
         startForeground(SERVICE_ID, notification);
     }
@@ -262,28 +254,28 @@ public class BluetoothService extends Service {
         mBuilder.setContentIntent(resultPendingIntent);
         mBuilder.setOngoing(true);
 
-        //set and register broadcast receivers for clicking notification buttons
-        disconnectedReceiver = new BroadcastReceiver() {
+        // Set and register broadcast receivers for clicking notification buttons
+        mDisconnectedReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                disconnectedPlayer.pause();
-                //remove notification and stop service
-                notificationManager.cancel(NOTIFICATION_ID);
+                mDisconnectedPlayer.pause();
+                // Remove notification and stop service
+                mNotificationManager.cancel(NOTIFICATION_ID);
                 bluetoothFinished();
             }
         };
-        registerReceiver(disconnectedReceiver, new IntentFilter(ACTION_DISCONNECTED_CONFIRMED_PRESSED));
+        registerReceiver(mDisconnectedReceiver, new IntentFilter(ACTION_DISCONNECTED_CONFIRMED_PRESSED));
 
-        //create intents for pressing notification buttons
+        // Create intents for pressing notification buttons
         Intent disconnectedReceive = new Intent(ACTION_DISCONNECTED_CONFIRMED_PRESSED);
         PendingIntent pendingIntentMotion = PendingIntent.getBroadcast(this, 123, disconnectedReceive, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //add the buttons and intents to notification
+        // Add the buttons and intents to notification
         mBuilder.addAction(android.R.drawable.ic_dialog_alert, "OK", pendingIntentMotion);
 
-        //build and show notification
+        // Build and show notification
         Notification notification = mBuilder.build();
-        notificationManager.notify(NOTIFICATION_ID, notification);
+        mNotificationManager.notify(NOTIFICATION_ID, notification);
 
         startForeground(SERVICE_ID, notification);
     }
@@ -309,26 +301,26 @@ public class BluetoothService extends Service {
         mBuilder.setContentIntent(resultPendingIntent);
         mBuilder.setOngoing(true);
 
-        //build and show notification
+        // Build and show notification
         Notification notification = mBuilder.build();
-        notificationManager.notify(NOTIFICATION_ID, notification);
+        mNotificationManager.notify(NOTIFICATION_ID, notification);
 
         startForeground(SERVICE_ID, notification);
     }
 
     private void bluetoothFinished() {
-        if (connectedHelper.isConnected())
-            connectedHelper.closeConnection();
-        if (waitReceiver != null)
-            unregisterReceiver(waitReceiver);
-        if (stopReceiver != null)
-            unregisterReceiver(stopReceiver);
-        if (motionDetectedReceiver != null)
-            unregisterReceiver(motionDetectedReceiver);
-        if (disconnectedReceiver != null)
-            unregisterReceiver(disconnectedReceiver);
-        motionDetectedPlayer.release();
-        disconnectedPlayer.release();
+        if (mConnectedHelper.isConnected())
+            mConnectedHelper.closeConnection();
+        if (mWaitReceiver != null)
+            unregisterReceiver(mWaitReceiver);
+        if (mStopReceiver != null)
+            unregisterReceiver(mStopReceiver);
+        if (mMotionDetectedReceiver != null)
+            unregisterReceiver(mMotionDetectedReceiver);
+        if (mDisconnectedReceiver != null)
+            unregisterReceiver(mDisconnectedReceiver);
+        mMotionDetectedPlayer.release();
+        mDisconnectedPlayer.release();
         BluetoothService.this.stopSelf();
     }
 

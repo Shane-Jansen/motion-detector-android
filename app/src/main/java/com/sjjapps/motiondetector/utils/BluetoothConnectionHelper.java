@@ -35,6 +35,7 @@ public class BluetoothConnectionHelper {
     private BluetoothAdapter mBluetoothAdapter;
     private Dialog mDevicesDialog;
     private Activity mContext;
+    private boolean mIsSearching;
 
     // Receivers
     private BroadcastReceiver mStartedSearchReceiver;
@@ -56,12 +57,12 @@ public class BluetoothConnectionHelper {
      */
     public void discoverDevices() {
         // Prepare list dialog to display found devices
+        mIsSearching = true;
         final AlertDialog.Builder deviceAlertBuilder = new AlertDialog.Builder(mContext).setTitle("Searching...").setCancelable(false)
                 .setNegativeButton("Close", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mBluetoothAdapter.cancelDiscovery();
-                        mDevicesDialog.dismiss();
+                        finishedSearching();
                     }
                 });
         final ListView devicesList = new ListView(mContext);
@@ -74,10 +75,9 @@ public class BluetoothConnectionHelper {
         devicesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mDevicesDialog.dismiss();
                 String macAddress = foundBluetoothDevices.get(position).getAddress();
-                mBluetoothAdapter.cancelDiscovery();
                 mConnectionHandler.obtainMessage(HANDLER_READY_TO_CONNECT, macAddress).sendToTarget();
+                finishedSearching();
             }
         });
         mDevicesDialog.show();
@@ -111,13 +111,18 @@ public class BluetoothConnectionHelper {
 
 
     /**
-     * Should be called when finished searching
+     * Should be called when finished/canceled searching
      * for and selecting a device.
      */
     public void finishedSearching() {
-        if (mStartedSearchReceiver != null) mContext.unregisterReceiver(mStartedSearchReceiver);
-        if (mFinishedSearchReceiver != null) mContext.unregisterReceiver(mFinishedSearchReceiver);
-        if (mDeviceFoundReceiver != null) mContext.unregisterReceiver(mDeviceFoundReceiver);
+        if (mIsSearching) {
+            mBluetoothAdapter.cancelDiscovery();
+            if (mStartedSearchReceiver != null) mContext.unregisterReceiver(mStartedSearchReceiver);
+            if (mFinishedSearchReceiver != null) mContext.unregisterReceiver(mFinishedSearchReceiver);
+            if (mDeviceFoundReceiver != null) mContext.unregisterReceiver(mDeviceFoundReceiver);
+            mDevicesDialog.dismiss();
+            mIsSearching = false;
+        }
     }
 
 }

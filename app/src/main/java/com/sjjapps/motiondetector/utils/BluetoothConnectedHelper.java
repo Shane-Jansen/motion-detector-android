@@ -24,87 +24,89 @@ import java.util.UUID;
  * and handled through this class.
  */
 public class BluetoothConnectedHelper {
-    //constants
+    // Constants
     public static final int HANDLER_RECEIVED_DATA = 1;
     public static final int HANDLER_CONNECTION_LOST = 2;
 
-    //instances
-    private BluetoothDevice bluetoothDevice;
-    private BluetoothSocket bluetoothSocket;
-    private Handler receiveDataHandler;
-    private ConnectThread connectThread;
-    private ConnectedThread connectedThread;
-
-    //receivers
-    private BroadcastReceiver deviceStateReceiver;
-
-    //data
-    private Context context;
-    private boolean isConnected = false;
+    // Instances
+    private BluetoothDevice mBluetoothDevice;
+    private BluetoothSocket mBluetoothSocket;
+    private Handler mReceiveDataHandler;
+    private ConnectThread mConnectThread;
+    private ConnectedThread mConnectedThread;
+    private BroadcastReceiver mDeviceStateReceiver;
+    private Context mContext;
+    private boolean mIsConnected = false;
 
     public BluetoothConnectedHelper(Context context, String macAddress, Handler receiveDataHandler) {
-        this.context = context;
-        this.receiveDataHandler = receiveDataHandler;
+        this.mContext = context;
+        this.mReceiveDataHandler = receiveDataHandler;
 
-        //create bluetooth device from macAddress
+        // Create bluetooth device from macAddress
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        bluetoothDevice = bluetoothAdapter.getRemoteDevice(macAddress);
+        mBluetoothDevice = bluetoothAdapter.getRemoteDevice(macAddress);
 
-        //start connection process
-        connectThread = new ConnectThread();
-        new Thread(connectThread).start();
+        // Start connection process
+        mConnectThread = new ConnectThread();
+        new Thread(mConnectThread).start();
     }
 
     /**
      * Thread to establish connection to bluetooth device
-     * after the bluetoothDevice has been selected.
+     * after the mBluetoothDevice has been selected.
      */
     private class ConnectThread implements Runnable {
         public void run() {
-            //Get a BluetoothSocket to connect with the given BluetoothDevice
+            // Get a BluetoothSocket to connect with the given BluetoothDevice
             try {
-                //UUID is the app's UUID string, also used by the server code
-                bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")); //standard UUID
-            } catch (IOException e) { }
+                // UUID is the app's UUID string, also used by the server code
+                mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")); // Standard UUID
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             try {
-                //Connect the device through the socket. This will block until it succeeds or throws an exception
-                bluetoothSocket.connect();
+                // Connect the device through the socket. This will block until it succeeds or throws an exception
+                mBluetoothSocket.connect();
             } catch (IOException connectException) {
-                // Unable to connect; close the socket and get out
+                // Unable to connect. Close the socket
                 try {
-                    bluetoothSocket.close();
-                    //needed because we cannot run on UI thread
+                    mBluetoothSocket.close();
+                    // Needed because we cannot run on UI thread
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(context, "Could not connect to device.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "Could not connect to device.", Toast.LENGTH_SHORT).show();
                         }
                     });
-                } catch (IOException closeException) { }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return;
             }
 
-            //do work to manage the connection (in a separate thread)
-            isConnected = true;
-            //needed because we cannot run on UI thread
+            // Do work to manage the connection (in a separate thread)
+            mIsConnected = true;
+            // Needed because we cannot run on UI thread
             Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(context, "Connected to Path Checker.", Toast.LENGTH_SHORT).show();
-                    //receiveDataHandler.obtainMessage(HANDLER_CONNECTION_SUCCESS).sendToTarget();
+                    Toast.makeText(mContext, "Connected to Path Checker.", Toast.LENGTH_SHORT).show();
+                    //mReceiveDataHandler.obtainMessage(HANDLER_CONNECTION_SUCCESS).sendToTarget();
                 }
             });
-            connectedThread = new ConnectedThread();
-            new Thread(connectedThread).start();
+            mConnectedThread = new ConnectedThread();
+            new Thread(mConnectedThread).start();
         }
 
         public void close() {
             try {
-                bluetoothSocket.close();
-            } catch (IOException e) { }
+                mBluetoothSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -114,40 +116,43 @@ public class BluetoothConnectedHelper {
      * device.
      */
     private class ConnectedThread implements Runnable {
-        private InputStream inputStream;
-        private OutputStream outputStream;
+        private InputStream mInputStream;
+        private OutputStream mOutputStream;
 
         @Override
         public void run() {
-            //register receiver for state changes
-            deviceStateReceiver = new BroadcastReceiver() {
+            // Register receiver for state changes
+            mDeviceStateReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    if (intent.getAction().equals(BluetoothDevice.ACTION_ACL_DISCONNECTED)) { //bluetooth disconnected
-                        Toast.makeText(context, "Disconnected from Path Checker.", Toast.LENGTH_SHORT).show();
-                        receiveDataHandler.obtainMessage(HANDLER_CONNECTION_LOST).sendToTarget();
+                    if (intent.getAction().equals(BluetoothDevice.ACTION_ACL_DISCONNECTED)) { // Bluetooth disconnected
+                        Toast.makeText(context, "Disconnected from Motion Detector.", Toast.LENGTH_SHORT).show();
+                        mReceiveDataHandler.obtainMessage(HANDLER_CONNECTION_LOST).sendToTarget();
                     }
                 }
             };
             IntentFilter stateFilter = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-            context.registerReceiver(deviceStateReceiver, stateFilter);
+            mContext.registerReceiver(mDeviceStateReceiver, stateFilter);
 
             try {
-                inputStream = bluetoothSocket.getInputStream();
-                outputStream = bluetoothSocket.getOutputStream();
-            } catch (IOException e) { }
+                mInputStream = mBluetoothSocket.getInputStream();
+                mOutputStream = mBluetoothSocket.getOutputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            byte[] buffer = new byte[1024]; //buffer store for the stream
-            int bytes; //bytes returned from read()
+            byte[] buffer = new byte[1024]; // Buffer store for the stream
+            int bytes; // Bytes returned from read()
 
-            //keep listening to the InputStream until an exception occurs
+            // Keep listening to the InputStream until an exception occurs
             while(true) {
                 try {
-                    //read from the InputStream
-                    bytes = inputStream.read(buffer);
-                    //send the obtained bytes to the UI activity
-                    receiveDataHandler.obtainMessage(HANDLER_RECEIVED_DATA, bytes, -1, buffer).sendToTarget();
+                    // Read from the InputStream
+                    bytes = mInputStream.read(buffer);
+                    // Send the obtained bytes to the UI activity
+                    mReceiveDataHandler.obtainMessage(HANDLER_RECEIVED_DATA, bytes, -1, buffer).sendToTarget();
                 } catch (IOException e) {
+                    e.printStackTrace();
                     break;
                 }
             }
@@ -156,8 +161,10 @@ public class BluetoothConnectedHelper {
         /* Call this to send data to the remote device */
         public void write(byte[] bytes) {
             try {
-                outputStream.write(bytes);
-            } catch (IOException e) { }
+                mOutputStream.write(bytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -166,16 +173,18 @@ public class BluetoothConnectedHelper {
      * False otherwise
      * @return
      */
-    public boolean isConnected() { return isConnected; }
+    public boolean isConnected() {
+        return mIsConnected;
+    }
 
     /**
      * Closes the bluetooth connection
      */
     public void closeConnection() {
-        if (isConnected) {
-            connectThread.close();
-            if (deviceStateReceiver != null)
-                context.unregisterReceiver(deviceStateReceiver);
+        if (mIsConnected) {
+            mConnectThread.close();
+            if (mDeviceStateReceiver != null)
+                mContext.unregisterReceiver(mDeviceStateReceiver);
         }
     }
 
@@ -185,8 +194,8 @@ public class BluetoothConnectedHelper {
      * @param s
      */
     public void sendData(String s) {
-        if (isConnected)
-            connectedThread.write(s.getBytes());
+        if (mIsConnected)
+            mConnectedThread.write(s.getBytes());
     }
 
 }

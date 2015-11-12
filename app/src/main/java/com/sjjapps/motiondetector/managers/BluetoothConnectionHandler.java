@@ -9,6 +9,9 @@ import com.sjjapps.motiondetector.utils.BluetoothConnectionHelper;
 
 /**
  * Created by Shane Jansen on 11/11/15.
+ *
+ * This handler is called after a Bluetooth device has
+ * been found and selected.
  */
 public class BluetoothConnectionHandler extends Handler {
     private Activity mActivity;
@@ -25,10 +28,6 @@ public class BluetoothConnectionHandler extends Handler {
                 String macAddress = (String) msg.obj; // Get mac address
                 Intent i = new Intent(mActivity, BluetoothService.class);
                 i.putExtra("macAddress", macAddress);
-                //String timeout = etTimeout.getText().toString();
-                //int timeoutInt = 5000;
-                //if (timeout.length() != 0) timeoutInt = Integer.parseInt(timeout) * 1000;
-                //i.putExtra("timeout", mTimeout);
                 mActivity.startService(i);
                 break;
         }

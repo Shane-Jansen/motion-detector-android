@@ -68,7 +68,9 @@ public class BluetoothFragment extends Fragment implements View.OnClickListener 
 
     @Override
     public void onPause() {
-        mConnectionHelper.finishedSearching();
+        if (mBluetoothAdapter != null) {
+            mConnectionHelper.finishedSearching();
+        }
         super.onPause();
     }
 
