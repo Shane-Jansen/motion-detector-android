@@ -35,11 +35,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".fragments.BluetoothFragment"
-            android:label="@string/title_activity_path_checker"
-            android:screenOrientation="portrait">
-        </activity>
 
         <!-- Parse Stuff -->
         <service android:name="com.parse.PushService" />
