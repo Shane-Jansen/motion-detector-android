@@ -8,10 +8,8 @@ to play a sound and show a notification. The notification is dismissed and the m
 is ready to detect the next movement. The alarm can be disabled for 1 minute from the application
 and if the connection is lost during use, a different sound will play.
 
+For full project details visit: http://shanejansen.com/android-bluetooth-motion-sensor-using-arduino
+
 ### Requirements
 
 * Works in conjunction with [this Arduino program.](https://github.com/ShaneJansen/MotionDetectorArduino)
-
-### Notes
-
-To see a working example, list of parts, and video demonstration visit: http://sjjapps.com/
