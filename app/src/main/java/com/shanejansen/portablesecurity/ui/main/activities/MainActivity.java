@@ -2,68 +2,27 @@ package com.shanejansen.portablesecurity.ui.main.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import com.shanejansen.mvpandroid.activities.BaseActivity;
+import com.shanejansen.mvpandroid.activities.FragmentActivity;
 import com.shanejansen.portablesecurity.R;
-import com.shanejansen.portablesecurity.ui.main.fragments.BluetoothFragment;
-import com.shanejansen.portablesecurity.ui.main.fragments.HomeFragment;
-import com.shanejansen.portablesecurity.ui.main.fragments.TransactionInterface;
 
-public class MainActivity extends BaseActivity
-    implements FragmentManager.OnBackStackChangedListener, TransactionInterface {
-  // Constants
-  private final static int FRAGMENT_CONTAINER = R.id.fragment_container;
+public class MainActivity extends FragmentActivity {
+  @Override protected int getMainFragmentContainerResourceId() {
+    return R.id.fragment_container;
+  }
 
-  // Instances
-  FragmentManager mFragmentManager = getSupportFragmentManager();
+  @Override protected String getActionBarTitle(Fragment fragment) {
+    return getResources().getString(R.string.app_name);
+  }
 
-  @Override protected int getLayoutResource() {
+  @Override protected int getLayoutResourceId() {
     return R.layout.activity_main;
   }
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
+  @Override protected int getToolbarResourceId() {
+    return R.id.toolbar;
+  }
+
+  @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    mFragmentManager.addOnBackStackChangedListener(this);
-    addFragment(new HomeFragment(), false); // Initial fragment
-  }
-
-  @Override public void onBackStackChanged() {
-    setActionBarNavigateUp();
-    setActionBarTitleFromCurrentFragment();
-  }
-
-  @Override public void onAttachFragment(Fragment fragment) {
-    super.onAttachFragment(fragment);
-    setActionBarTitleFromCurrentFragment();
-  }
-
-  @Override public boolean onSupportNavigateUp() {
-    removeCurrentFragment();
-    return true;
-  }
-
-  @Override public void addFragment(Fragment fragment, boolean shouldAddToBackStack) {
-    FragmentTransaction transaction = mFragmentManager.beginTransaction();
-    transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
-        android.R.anim.fade_in, android.R.anim.fade_out);
-    transaction.add(FRAGMENT_CONTAINER, fragment);
-    if (shouldAddToBackStack) {
-      transaction.addToBackStack(null);
-    }
-    transaction.commit();
-  }
-
-  @Override public void removeCurrentFragment() {
-    mFragmentManager.popBackStack();
-  }
-
-  private void setActionBarTitleFromCurrentFragment() {
-    Fragment currentFragment = mFragmentManager.findFragmentById(FRAGMENT_CONTAINER);
-    String newTitle = "";
-    if (currentFragment instanceof HomeFragment) {
-      newTitle = "Main Menu";
-    } else if (currentFragment instanceof BluetoothFragment) newTitle = "Bluetooth";
-    setActionBarTitle(newTitle);
   }
 }
