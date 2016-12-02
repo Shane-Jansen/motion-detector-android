@@ -1,13 +1,10 @@
 <resources>
   <string name="app_name">PortableSecurity</string>
-  <string name="title_activity_path_checker">Path Checker</string>
-
-  <string name="hello_world">Hello world!</string>
-  <string name="action_settings">Settings</string>
-
-  <string name="bluetooth.search">Search For Access</string>
-  <string name="home.bluetooth.motion">Bluetooth Motion Sensor</string>
-  <string name="text_settings">Settings</string>
-  <string name="text_wifi">WiFi</string>
-  <string name="text_bluetooth">Bluetooth</string>
+  <string name="search_for_access">Search For Access</string>
+  <string name="bluetooth_motion_sensor">Bluetooth Motion Sensor</string>
+  <string name="settings">Settings</string>
+  <string name="wifi">WiFi</string>
+  <string name="wifi_devices">WiFi Devices</string>
+  <string name="bluetooth">Bluetooth</string>
+  <string name="bluetooth_devices">Bluetooth Devices</string>
 </resources>

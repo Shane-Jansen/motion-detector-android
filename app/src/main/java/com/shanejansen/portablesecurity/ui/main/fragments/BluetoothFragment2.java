@@ -1,30 +1,13 @@
 package com.shanejansen.portablesecurity.ui.main.fragments;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
-import com.shanejansen.portablesecurity.R;
-import com.shanejansen.portablesecurity.data.handlers.BluetoothConnectionHandler;
-import com.shanejansen.portablesecurity.data.helpers.BluetoothConnectionHelper;
-
 /**
  * Created by Shane Jansen on 4/7/15.
  *
  * Activity for PathChecker
  */
-public class BluetoothFragment extends Fragment implements View.OnClickListener {
+public class BluetoothFragment2 { //extends Fragment implements View.OnClickListener {
   // Constants
-  public static final int REQUEST_ENABLE_BT = 1;
+  /*public static final int REQUEST_ENABLE_BT = 1;
 
   // Instances
   private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -82,14 +65,14 @@ public class BluetoothFragment extends Fragment implements View.OnClickListener 
         mTransactionInterface.removeCurrentFragment();
       }
     }
-  }
+  }*/
 
   /**
    * Check if bluetooth is available for this device.
    * Check if bluetooth is turned on for this device
    * and requests to turn it on if not.
    */
-  private void checkBluetoothState() {
+  /*private void checkBluetoothState() {
     if (mBluetoothAdapter == null) {
       // Device does not support bluetooth. Exit the fragment
       new AlertDialog.Builder(getActivity()).setTitle("Bluetooth Not Supported")
@@ -109,5 +92,5 @@ public class BluetoothFragment extends Fragment implements View.OnClickListener 
         Toast.makeText(getActivity(), "Ready to discover devices.", Toast.LENGTH_SHORT).show();
       }
     }
-  }
+  }*/
 }

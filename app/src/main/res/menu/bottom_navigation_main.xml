@@ -3,20 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
   <item
       android:id="@+id/action_bluetooth"
-      android:enabled="true"
       android:icon="@drawable/ic_bluetooth_white_24dp"
-      android:title="@string/text_bluetooth"
-      app:showAsAction="ifRoom" />
+      android:title="@string/bluetooth"
+      app:showAsAction="always" />
   <item
       android:id="@+id/action_wifi"
-      android:enabled="true"
       android:icon="@drawable/ic_wifi_white_24dp"
-      android:title="@string/text_wifi"
-      app:showAsAction="ifRoom" />
+      android:title="@string/wifi"
+      app:showAsAction="always" />
   <item
       android:id="@+id/action_settings"
-      android:enabled="true"
       android:icon="@drawable/ic_settings_white_24dp"
-      android:title="@string/text_settings"
-      app:showAsAction="ifRoom" />
+      android:title="@string/settings"
+      app:showAsAction="always" />
 </menu>
