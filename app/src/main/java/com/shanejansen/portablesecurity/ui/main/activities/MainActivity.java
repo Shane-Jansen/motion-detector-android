@@ -43,6 +43,7 @@ public class MainActivity extends AppFragmentActivity
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    addFragment(createOrRetrieveFragment(BluetoothFragment.class), MAIN_CONTAINER, false);
     mBnNavigation.setOnNavigationItemSelectedListener(this);
   }
 
@@ -52,7 +53,7 @@ public class MainActivity extends AppFragmentActivity
         addFragment(createOrRetrieveFragment(BluetoothFragment.class), MAIN_CONTAINER, false);
         break;
       case R.id.action_wifi:
-        addFragment(createOrRetrieveFragment(WifiFragment.class), MAIN_CONTAINER, true);
+        addFragment(createOrRetrieveFragment(WifiFragment.class), MAIN_CONTAINER, false);
         break;
       case R.id.action_settings:
         addFragment(createOrRetrieveFragment(SettingsFragment.class), MAIN_CONTAINER, false);
