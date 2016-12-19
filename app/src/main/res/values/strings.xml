@@ -7,4 +7,6 @@
   <string name="wifi_devices">WiFi Devices</string>
   <string name="bluetooth">Bluetooth</string>
   <string name="bluetooth_devices">Bluetooth Devices</string>
+  <string name="cell">Cell</string>
+  <string name="cell_devices">Cell Devices</string>
 </resources>

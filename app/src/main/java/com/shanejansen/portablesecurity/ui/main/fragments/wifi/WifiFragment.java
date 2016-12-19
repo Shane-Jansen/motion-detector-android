@@ -10,4 +10,12 @@ public class WifiFragment extends BaseFragment {
   @Override protected int getLayoutResourceId() {
     return R.layout.fragment_wifi;
   }
+
+  @Override public void onDestroyView() {
+    super.onDestroyView();
+  }
+
+  @Override public void onDestroy() {
+    super.onDestroy();
+  }
 }

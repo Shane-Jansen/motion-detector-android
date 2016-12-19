@@ -18,6 +18,12 @@
     <item name="colorControlHighlight">@color/accent</item>
   </style>
 
+  <!-- Widgets -->
+  <style name="Toolbar">
+    <item name="colorControlNormal">@android:color/white</item>
+    <item name="android:textColorPrimary">@android:color/white</item>
+  </style>
+
   <style name="StdButton">
     <item name="android:background">@android:color/holo_blue_light</item>
     <item name="android:paddingLeft">10dp</item>

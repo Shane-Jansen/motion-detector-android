@@ -38,5 +38,9 @@
       </intent-filter>
     </activity>
 
+    <activity
+        android:name=".ui.main.activities.SettingsActivity"
+        android:parentActivityName=".ui.main.activities.MainActivity" />
+
   </application>
 </manifest>
